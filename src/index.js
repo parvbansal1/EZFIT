@@ -39,12 +39,13 @@ import AuthContextProvider from "./component/AuthContextProvider";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <Auth0Provider
-    domain="dev-eh4qem0q3zf0rfef.us.auth0.com"
-    clientId="u5ZLJvonxTQzGsmDrrlFxX6FzTeKkWbk"
-    authorizationParams={{
-      redirect_uri: "http://localhost:3000/track",
-    }}
-  >
+  domain="dev-eh4qem0q3zf0rfef.us.auth0.com"
+  clientId="u5ZLJvonxTQzGsmDrrlFxX6FzTeKkWbk"
+  authorizationParams={{
+    redirect_uri: window.location.origin + "/track",
+  }}
+>
+
     <AuthContextProvider>
       <BrowserRouter>
         <App />

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # polite-sheep-7319
 
 # HEALTH & FITNESS REACT APP
@@ -69,3 +70,7 @@ Follow the following steps to get development environment running.
   npm start
   ```
 ---
+=======
+# EZFIT
+This is Fitness App
+>>>>>>> 9af4722f0b11e42e4ddb2a9431fc60660fc5808f
