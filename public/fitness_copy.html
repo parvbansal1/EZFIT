@@ -1,0 +1,392 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fitness Tracker</title>
+  <link rel="shortcut icon" href="mylogo11.png" type="image/x-icon" />
+  <meta name="description" content="File Fusion - Free Fitness Tracker">
+  <meta name="keywords" content="Fitness tracker, Fitness Arpit Sharma">
+  <meta name="author" content="Arpit Sharma">
+  <meta property="og:title" content="File Fusion Fitness Tracker">
+  <meta property="og:description" content="Use our Free Fitness Tracker Service.">
+  <meta property="og:image" content="mylogo11.png">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      box-sizing: border-box;
+      transition: all 0.3s ease-in-out;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #d0f0fd, #f5faff);
+      color: #333;
+      overflow-x: hidden;
+    }
+    header {
+      background: #0d47a1;
+      padding: 30px;
+      text-align: center;
+      color: white;
+      font-size: 36px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+    .container {
+      max-width: 900px;
+      background: white;
+      margin: 60px auto;
+      padding: 50px;
+      border-radius: 30px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 1s ease forwards;
+    }
+    h2 {
+      margin-bottom: 30px;
+      font-weight: 600;
+      color: #0d47a1;
+      font-size: 28px;
+    }
+    input {
+      width: 100%;
+      padding: 16px;
+      margin: 14px 0;
+      border-radius: 12px;
+      border: 1px solid #ccc;
+      font-size: 17px;
+    }
+    button {
+      width: 100%;
+      padding: 16px;
+      margin-top: 30px;
+      background: #0d47a1;
+      border: none;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #083a83;
+      transform: scale(1.03);
+    }
+    .result {
+      margin-top: 40px;
+      padding: 25px;
+      background: #e3f2fd;
+      border-left: 8px solid #0d47a1;
+      border-radius: 16px;
+      font-size: 18px;
+      animation: slideUp 0.6s ease forwards;
+      line-height: 1.6;
+    }
+    footer {
+      text-align: center;
+      padding: 25px;
+      background-color: #0d47a1;
+      color: white;
+      font-weight: bold;
+      font-size: 17px;
+      margin-top: 80px;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.2);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <i class="fas fa-heartbeat"></i> Fitness Tracker App
+  </header>
+
+  <div class="container">
+    <h2>Enter Your Health Info</h2>
+    <input type="number" id="weight" placeholder="Weight (kg)">
+    <input type="number" id="height" placeholder="Height (cm)">
+    <input type="number" id="pulse" placeholder="Pulse Rate (bpm)">
+    <input type="text" id="bp" placeholder="Blood Pressure (e.g. 120/80)">
+    <input type="time" id="sleepStart" placeholder="Sleep Start Time">
+    <input type="time" id="sleepEnd" placeholder="Wake-up Time">
+    <input type="number" id="waterIntake" placeholder="Water Intake (glasses)">
+    <button onclick="checkFitness()">Check Now</button>
+    <div class="result" id="resultBox" style="display: none;"></div>
+  </div>
+
+  <footer>
+    Designed by Arpit Sharma
+  </footer>
+
+  <script>
+    function calculateSleep(start, end) {
+      const [startH, startM] = start.split(":").map(Number);
+      const [endH, endM] = end.split(":").map(Number);
+      let hours = endH - startH + (endM - startM) / 60;
+      if (hours < 0) hours += 24;
+      return hours;
+    }
+
+    function checkFitness() {
+      const weight = parseFloat(document.getElementById("weight").value);
+      const height = parseFloat(document.getElementById("height").value);
+      const pulse = parseInt(document.getElementById("pulse").value);
+      const bp = document.getElementById("bp").value.trim();
+      const sleepStart = document.getElementById("sleepStart").value;
+      const sleepEnd = document.getElementById("sleepEnd").value;
+      const waterIntake = parseInt(document.getElementById("waterIntake").value);
+
+      let output = "";
+      const heightM = height / 100;
+      const bmi = weight / (heightM * heightM);
+      output += `<strong>BMI:</strong> ${bmi.toFixed(2)} - `;
+      output += bmi < 18.5 ? "Underweight" : bmi < 25 ? "Normal" : bmi < 30 ? "Overweight" : "Obese";
+      output += "<br><br>";
+
+      output += `<strong>Pulse Rate:</strong> ${pulse} bpm - `;
+      output += pulse < 60 ? "Low" : pulse > 100 ? "High" : "Normal";
+      output += "<br><br>";
+
+      const bpParts = bp.split("/");
+      let sys = 0, dia = 0;
+      if (bpParts.length === 2) {
+        sys = parseInt(bpParts[0]);
+        dia = parseInt(bpParts[1]);
+        output += `<strong>Blood Pressure:</strong> ${sys}/${dia} - `;
+        output += (sys < 90 || dia < 60) ? "Low BP" : (sys > 140 || dia > 90) ? "High BP" : "Normal BP";
+      } else {
+        output += "<strong>Blood Pressure:</strong> Invalid Format. Use format like 120/80.";
+      }
+      output += "<br><br>";
+
+      let sleepHours = 0;
+      if (sleepStart && sleepEnd) {
+        sleepHours = calculateSleep(sleepStart, sleepEnd);
+        output += `<strong>Sleep:</strong> ${sleepHours.toFixed(1)} hrs - `;
+        output += sleepHours < 6 ? "Too little" : sleepHours <= 9 ? "Good" : "Too much";
+        output += "<br><br>";
+      }
+
+      output += `<strong>Water Intake:</strong> ${waterIntake} glasses - `;
+      output += waterIntake < 8 ? "Drink more water!" : "Good hydration!";
+
+      const resultBox = document.getElementById("resultBox");
+      resultBox.style.display = "block";
+      resultBox.innerHTML = output;
+
+      // Send data to Google Sheets
+      const sheetData = new URLSearchParams();
+      sheetData.append("Weight", weight);
+      sheetData.append("Height", height);
+      sheetData.append("BMI", bmi.toFixed(2));
+      sheetData.append("Pulse", pulse);
+      sheetData.append("BP", bp);
+      sheetData.append("Sleep Hours", sleepHours.toFixed(1));
+      sheetData.append("Water Intake", waterIntake);
+      sheetData.append("Date", ""); // auto-filled by script
+
+      fetch("https://script.google.com/macros/s/AKfycbxHplM1kZHiGp_jl5MpY405O5wCSSuE_l835WrmFYUZ0RTj1ZbM8dPmOVJ2C4OsQdWS/exec", {
+        method: "POST",
+        body: sheetData
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Saved to Google Sheet:", data);
+      })
+      .catch(error => {
+        console.error("Error saving to Google Sheet:", error);
+      });
+    }
+  </script>
+
+</body>
+</html> -->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Fitness Tracker</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #eef6fc;
+      margin: 0;
+      padding: 0;
+    }
+    header, footer {
+      background-color: #007bff;
+      color: white;
+      text-align: center;
+      padding: 16px 0;
+    }
+    .container {
+      max-width: 600px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 25px;
+      color: #333;
+    }
+    input, button {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+    }
+    button {
+      background-color: #007bff;
+      color: #fff;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+    #resultBox {
+      margin-top: 20px;
+      padding: 15px;
+      background: #f0f8ff;
+      border-left: 5px solid #007bff;
+      line-height: 1.6;
+    }
+    .recommendation {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #d1ecf1;
+      border-left: 5px solid #17a2b8;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>My Fitness Tracker</h1>
+</header>
+
+<div class="container">
+  <h2>Track Your Health</h2>
+  <input type="number" id="weight" placeholder="Weight (kg)">
+  <input type="number" id="height" placeholder="Height (cm)">
+  <input type="number" id="pulse" placeholder="Pulse Rate (bpm)">
+  <input type="text" id="bp" placeholder="Blood Pressure (e.g., 120/80)">
+  <input type="time" id="sleepStart">
+  <input type="time" id="sleepEnd">
+  <input type="number" id="waterIntake" placeholder="Water Intake (glasses)">
+  <button onclick="checkFitness()">Submit</button>
+
+  <div id="resultBox" style="display: none;"></div>
+</div>
+
+<footer>
+  <p>&copy; 2025 Fitness Tracker by Arpit Sharma. All rights reserved.</p>
+</footer>
+
+<script>
+  const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwjm2e-_U8YuhyHPR3SOIR6gePV1NMMYD034m0kgJh_iHcOp-cdhdoHb2OIex6aTZfh/exec";
+
+  function calculateSleep(start, end) {
+    const [sh, sm] = start.split(":").map(Number);
+    const [eh, em] = end.split(":").map(Number);
+    let hours = eh - sh + (em - sm) / 60;
+    return hours < 0 ? hours + 24 : hours;
+  }
+
+  function getRecommendations(bmi, pulse, bp, sleep, water) {
+    let rec = "";
+
+    if (bmi < 18.5) rec += "You are underweight. Consider a nutritious diet.<br>";
+    else if (bmi > 24.9) rec += "You are overweight. Try regular exercise and a balanced diet.<br>";
+    else rec += "Your BMI is normal. Great job!<br>";
+
+    if (pulse < 60) rec += "Pulse is low. If tired, consult a doctor.<br>";
+    else if (pulse > 100) rec += "High pulse rate. Stay hydrated and rest.<br>";
+
+    const [systolic, diastolic] = bp.split("/").map(Number);
+    if (systolic > 130 || diastolic > 85) rec += "High blood pressure. Reduce salt and stress.<br>";
+
+    if (sleep < 6) rec += "You need more sleep. Aim for 7–8 hours.<br>";
+    if (water < 6) rec += "Increase water intake. Aim for 8+ glasses/day.<br>";
+
+    return rec;
+  }
+
+  function checkFitness() {
+    const weight = parseFloat(document.getElementById("weight").value);
+    const height = parseFloat(document.getElementById("height").value);
+    const pulse = parseFloat(document.getElementById("pulse").value);
+    const bp = document.getElementById("bp").value;
+    const sleepStart = document.getElementById("sleepStart").value;
+    const sleepEnd = document.getElementById("sleepEnd").value;
+    const waterIntake = parseFloat(document.getElementById("waterIntake").value);
+
+    if (!weight || !height || !pulse || !bp || !sleepStart || !sleepEnd || !waterIntake) {
+      alert("Please fill all fields.");
+      return;
+    }
+
+    const bmi = weight / ((height / 100) ** 2);
+    const sleepHours = calculateSleep(sleepStart, sleepEnd);
+
+    const data = {
+      Weight: weight,
+      Height: height,
+      Pulse: pulse,
+      BP: bp,
+      BMI: bmi.toFixed(2),
+      "Sleep Hours": sleepHours.toFixed(1),
+      "Water Intake": waterIntake
+    };
+
+    const recommendation = getRecommendations(bmi, pulse, bp, sleepHours, waterIntake);
+
+    const resultBox = document.getElementById("resultBox");
+    resultBox.style.display = "block";
+    resultBox.innerHTML = `
+      <strong>Your Fitness Summary:</strong><br><br>
+      <b>Weight:</b> ${weight} kg<br>
+      <b>Height:</b> ${height} cm<br>
+      <b>BMI:</b> ${bmi.toFixed(2)}<br>
+      <b>Pulse:</b> ${pulse} bpm<br>
+      <b>Blood Pressure:</b> ${bp}<br>
+      <b>Sleep Duration:</b> ${sleepHours.toFixed(1)} hours<br>
+      <b>Water Intake:</b> ${waterIntake} glasses<br><br>
+      <div class="recommendation"><b>Recommendations:</b><br>${recommendation}</div>
+      <br>Saving data to Google Sheet...
+    `;
+
+    fetch(GOOGLE_SCRIPT_URL, {
+      method: "POST",
+      mode: "no-cors",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams(data)
+    }).then(() => {
+      resultBox.innerHTML += `<br><br><span style='color:green;'>✅ Data saved successfully.</span>`;
+    }).catch(err => {
+      resultBox.innerHTML += `<br><br><span style='color:red;'>❌ Failed to save data.</span>`;
+      console.error(err);
+    });
+  }
+</script>
+
+</body>
+</html>
